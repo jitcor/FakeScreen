@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.FakeScreen" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.FakeScreen" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/teal_700</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+    </style>
+
 </resources>

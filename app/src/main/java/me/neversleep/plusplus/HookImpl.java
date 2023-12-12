@@ -32,7 +32,7 @@ public class HookImpl {
                               }
                               XUtils.xLog("neversleep", "beforeHookedMethod: power is true");
                               Class<?> cls = Class.forName("android.view.SurfaceControl", false, classLoader);
-                              IBinder iBinder = Build.VERSION.SDK_INT < 29 ? (IBinder) XposedHelpers.callStaticMethod(cls, "getBuiltInDisplay", 0) : (IBinder) XposedHelpers.callStaticMethod(cls, "getInternalDisplayToken");
+                              IBinder iBinder = getDisplayBinder(classLoader);
                               if (iBinder != null) {
                                    XposedHelpers.callStaticMethod(cls, "setDisplayPowerMode", iBinder, this.mode);
                                    if (this.mode == 0) {
@@ -53,4 +53,27 @@ public class HookImpl {
                XUtils.xLog("neversleep", "main: error:" + th.getMessage(), th);
           }
      }
+
+     static IBinder getDisplayBinder(ClassLoader classLoader){
+          try {
+               Class<?> clsSurfaceControl = XposedHelpers.findClass("android.view.SurfaceControl", classLoader);
+               if(Build.VERSION.SDK_INT<Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+                    return Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ?
+                            (IBinder) XposedHelpers.callStaticMethod(clsSurfaceControl, "getBuiltInDisplay", 0) :
+                            (IBinder) XposedHelpers.callStaticMethod(clsSurfaceControl, "getInternalDisplayToken");
+               }else {
+                    Class<?> clsDisplayControl = XposedHelpers.findClass("com.android.server.display.DisplayControl", classLoader);
+                    long[] ids= (long[]) XposedHelpers.callStaticMethod(clsDisplayControl,"getPhysicalDisplayIds");
+                    if(ids==null||ids.length==0){
+                         return null;
+                    }
+                    return (IBinder) XposedHelpers.callStaticMethod(clsDisplayControl,"getPhysicalDisplayToken",ids[0]);
+               }
+
+          }catch (Throwable t){
+               XUtils.xLog(TAG,"getDisplayBinder",t);
+          }
+          return null;
+     }
+
 }

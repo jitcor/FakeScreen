@@ -41,7 +41,7 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
           XposedHelpers.findAndHookMethod("me.neversleep.plusplus.MainActivity", loadPackageParam.classLoader, "getActiveVersion", new XC_MethodHook() {
                protected void afterHookedMethod(XC_MethodHook.MethodHookParam methodHookParam) throws Throwable {
                     super.afterHookedMethod(methodHookParam);
-                    methodHookParam.setResult(6);
+                    methodHookParam.setResult(BuildConfig.VERSION_CODE);
                }
           });
      }

@@ -6,7 +6,9 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.quicksettings.TileService;
@@ -21,7 +23,6 @@ import androidx.core.internal.view.SupportMenu;
 import androidx.core.view.InputDeviceCompat;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = MainActivity.class.getSimpleName();
     private SharedPreferences xConf;
 
     public static int getActiveVersion() {
@@ -63,9 +64,17 @@ public class MainActivity extends AppCompatActivity {
     protected void main() {
         TextView textView = findViewById(R.id.tips);
         TextView textView2 = findViewById(R.id.shell_control);
+        TextView info = findViewById(R.id.info);
         SwitchCompat switchCompat = findViewById(R.id.power);
+
+        info.setOnClickListener(view -> {
+            Uri uri = Uri.parse("https://github.com/jitcor");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        });
+        info.setText(String.format("v%s | jitcor",BuildConfig.VERSION_NAME));
         String command = "am start -n me.neversleep.plusplus/.MainActivity --ez power true/false";
-        textView2.setText(String.format(getString(R.string.shell_control), "am start -n me.neversleep.plusplus/.MainActivity --ez power true/false"));
+        textView2.setText(String.format(getString(R.string.shell_control), command));
         textView2.setOnLongClickListener(view -> {
             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             if (clipboardManager != null) {
@@ -81,28 +90,24 @@ public class MainActivity extends AppCompatActivity {
             textView.setVisibility(View.VISIBLE);
             textView.setText(R.string.active_tips);
             textView.setTextColor(SupportMenu.CATEGORY_MASK);
-        } else if (6 == getActiveVersion()) {
+        } else if (BuildConfig.VERSION_CODE == getActiveVersion()) {
             textView.setVisibility(View.INVISIBLE);
         } else {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(String.format(getString(R.string.active_warn), Integer.valueOf(getActiveVersion()), 6));
+            textView.setText(String.format(getString(R.string.active_warn), getActiveVersion(), BuildConfig.VERSION_CODE));
             textView.setTextColor(InputDeviceCompat.SOURCE_ANY);
         }
-        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
-                SharedPreferences sharedPreferences = MainActivity.this.xConf;
-                if (sharedPreferences != null) {
-                    if (!sharedPreferences.edit().putBoolean("power", z).commit()) {
-                        Toast.makeText(MainActivity.this, getString(R.string.failed_tips), 1).show();
-                    }
-                    if (Build.VERSION.SDK_INT < 24) {
-                        return;
-                    }
+        switchCompat.setOnCheckedChangeListener((compoundButton, z) -> {
+            SharedPreferences sharedPreferences = MainActivity.this.xConf;
+            if (sharedPreferences != null) {
+                if (!sharedPreferences.edit().putBoolean("power", z).commit()) {
+                    Toast.makeText(MainActivity.this, getString(R.string.failed_tips), Toast.LENGTH_LONG).show();
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     TileService.requestListeningState(MainActivity.this, new ComponentName(BuildConfig.APPLICATION_ID, QuickStartService.class.getName()));
                 }
-
             }
+
         });
         checkEdXposed();
         if (this.xConf == null) {
@@ -113,16 +118,12 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "success", Toast.LENGTH_LONG).show();
             }
-            if (Build.VERSION.SDK_INT >= 24) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 TileService.requestListeningState(this, new ComponentName(BuildConfig.APPLICATION_ID, QuickStartService.class.getName()));
             }
             finish();
         } else {
-            SharedPreferences sharedPreferences = this.xConf;
-            if (sharedPreferences == null) {
-                return;
-            }
-            switchCompat.setChecked(sharedPreferences.getBoolean("power", false));
+            switchCompat.setChecked(this.xConf.getBoolean("power", false));
         }
     }
 
