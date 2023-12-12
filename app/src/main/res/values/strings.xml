@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FakeScreen</string>
+    <string name="tile_label">@string/app_name</string>
+    <string name="use_desc">After it is turned on, clicking the power button will only turn off the screen, and other states will remain unchanged.</string>
+    <string name="shell_control">Shell control commands: %s</string>
+    <string name="ignore">Ignore</string>
+    <string name="active_tips">Please activate the module first! !</string>
+    <string name="active_warn">Current activated version: %d, non-installed version: %d</string>
+    <string name="not_supported">It seems that you are using an out dated version of LSPosed or LSPosed is not activated, please update LSPosed or try again after activated.</string>
+    <string name="auth_failed">Authorization failed</string>
+    <string name="copy_failed">copy failed</string>
+    <string name="copy_success">copy success</string>
+    <string name="describe">Never sleep but don\'t want the screen to be on</string>
+    <string name="failed_tips">Failed</string>
+
+</resources>

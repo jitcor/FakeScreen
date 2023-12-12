@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="active_tips">请先激活模块！！</string>
+    <string name="active_warn">当前激活版本：%d,非已安装版本：%d</string>
+    <string name="app_name">FakeScreen</string>
+    <string name="auth_failed">授权失败</string>
+    <string name="copy_failed">复制失败</string>
+    <string name="copy_success">复制成功</string>
+    <string name="describe">永不休眠却不想屏幕亮着</string>
+    <string name="failed_tips">failed</string>
+    <string name="ignore">忽略</string>
+    <string name="not_supported">您似乎正在使用过时的 LSPosed 版本或 LSPosed 未激活，请更新 LSPosed 或者激活后再试。</string>
+    <string name="shell_control">shell控制命令:%s</string>
+    <string name="tile_label">@string/app_name</string>
+    <string name="use_desc">开启后，点击电源键将只息屏，其他状态不变</string>
+</resources>
