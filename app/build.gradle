@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -17,6 +19,16 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (variant.buildType.name == 'release') {
+                def timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
+                def fileName = "${defaultConfig.versionName}_${timeStamp}_release.apk"
+                outputFileName = fileName
+            }
         }
     }
 
