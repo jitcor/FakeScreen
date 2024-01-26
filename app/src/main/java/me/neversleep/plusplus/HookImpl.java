@@ -48,6 +48,7 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
+               //ref:https://cs.android.com/android/platform/superproject/+/android-5.1.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=01c06dfb076b71cb72c4bff9175bec9d59d2efde;l=1539
                XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "getScreenOffTimeoutLocked", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
