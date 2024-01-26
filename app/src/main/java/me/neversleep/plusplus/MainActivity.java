@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.view.View;
 import android.widget.TextView;
@@ -58,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         main();
-        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 1000);
-        Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 1000);
     }
 
     @SuppressLint("RestrictedApi")
