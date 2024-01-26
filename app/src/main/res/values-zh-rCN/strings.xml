@@ -13,10 +13,7 @@
     <string name="shell_control">shell控制命令:%s</string>
     <string name="tile_label">@string/app_name</string>
     <string name="use_desc">开启后，点击电源键将只息屏，其他状态不变</string>
-    <string name="disable_sleep">大部分手机都有永不休眠选项，若你的手机没有该选项，可以尝试点击这里禁用系统休眠机制</string>
-    <string name="disable_sleep_alert_message">该功能属于ROOT功能，未进行充分测试，请谨慎操作，实现原理参考的issues/11里的Magisk模块</string>
-    <string name="disabel_sleep_alert_title">禁用休眠</string>
-    <string name="no_root_tips">没有ROOT权限</string>
-    <string name="recovery">恢复</string>
-    <string name="disable">禁用</string>
+    <string name="disable_sleep">禁用休眠</string>
+    <string name="disable_sleep_desc">可选功能，手机将永不休眠，需重启手机生效</string>
+    <string name="disable_sleep_error_tips">更改设置失败</string>
 </resources>

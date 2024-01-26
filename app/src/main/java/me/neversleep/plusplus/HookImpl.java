@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -48,30 +49,13 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
-               //ref:https://www.cnblogs.com/crushgirl/p/15630106.html
-               //ref:https://cs.android.com/android/platform/superproject/+/android-14.0.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=b3691fab2356133dfc7e11c213732ffef9a85315;l=2876
-               XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "updateUserActivitySummaryLocked", new XC_MethodHook() {
-
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                         super.beforeHookedMethod(param);
-                         try {
-                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: start");
-                              xSharedPreferences.reload();
-                              if (!xSharedPreferences.getBoolean("power", false)) {
-                                   Log.e("neversleep", "updateUserActivitySummaryLocked: power is false");
-                                   return;
-                              }
-                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: power is true");
-                              param.setResult(null);
-                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: disable sleep success");
-                         } catch (Throwable t) {
-                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: error:", t);
-                         }
-
-                    }
-               });
-               XUtils.xLog("neversleep", "main: Hook updateUserActivitySummaryLocked success");
+               if (xSharedPreferences.getBoolean("disable_sleep", false)) {
+                    XUtils.xLog("neversleep", "disable sleep:  true");
+                    //ref:https://www.cnblogs.com/crushgirl/p/15630106.html
+                    //ref:https://cs.android.com/android/platform/superproject/+/android-14.0.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=b3691fab2356133dfc7e11c213732ffef9a85315;l=2876
+                    XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "updateUserActivitySummaryLocked", XC_MethodReplacement.returnConstant(null));
+                    XUtils.xLog("neversleep", "main: Hook disable_sleep success");
+               }
           } catch (Throwable th) {
                th.printStackTrace();
                XUtils.xLog("neversleep", "main: error:" + th.getMessage(), th);

@@ -12,11 +12,8 @@
     <string name="copy_success">copy success</string>
     <string name="describe">Never sleep but don\'t want the screen to be on</string>
     <string name="failed_tips">Failed</string>
-    <string name="disable_sleep">Most of the phones have never sleep option, if your phone doesn\'t have that option, you can try to click here to disable the system sleep mechanism.</string>
-    <string name="disable_sleep_alert_message">This function belongs to the ROOT function, not fully tested, please operate with caution, the realization of the principle of reference issues/11 in the Magisk module.</string>
-    <string name="disabel_sleep_alert_title">Disable Sleep</string>
-    <string name="no_root_tips">No ROOT permission</string>
-    <string name="recovery">Recovery</string>
-    <string name="disable">Disable</string>
+    <string name="disable_sleep">Disable sleep</string>
+    <string name="disable_sleep_desc">Optional, phone will never sleeps, need reboot phone to take effect</string>
+    <string name="disable_sleep_error_tips">Failed to change settings</string>
 
 </resources>

@@ -8,6 +8,7 @@
         android:id="@+id/power"
         android:layout_width="110dp"
         android:layout_height="115dp"
+        android:layout_marginBottom="200dp"
         android:text="Power"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,7 +32,7 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
@@ -68,5 +69,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <CheckBox
+        android:id="@+id/disable_sleep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="8dp"
+        android:shadowColor="@color/white"
+        android:text="@string/disable_sleep"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shell_control" />
+
+    <TextView
+        android:id="@+id/textView"
+
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/disable_sleep_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/disable_sleep" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

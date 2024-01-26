@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.quicksettings.TileService;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,13 +65,29 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.tips);
         TextView textView2 = findViewById(R.id.shell_control);
         TextView info = findViewById(R.id.info);
+        CheckBox disableSleep = findViewById(R.id.disable_sleep);
         SwitchCompat switchCompat = findViewById(R.id.power);
         info.setOnClickListener(view -> {
             Uri uri = Uri.parse("https://github.com/jitcor");
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         });
-        info.setText(String.format("v%s | jitcor",BuildConfig.VERSION_NAME));
+        if (xConf != null) {
+            disableSleep.setChecked(xConf.getBoolean("disable_sleep", false));
+        }
+        disableSleep.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (xConf != null) {
+                boolean old = xConf.getBoolean("disable_sleep", false);
+                if (old != isChecked) {
+                    if (!xConf.edit().putBoolean("disable_sleep", isChecked).commit()) {
+                        Toast.makeText(MainActivity.this, R.string.disable_sleep_error_tips, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                Toast.makeText(this, "error: xConf is null!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        info.setText(String.format("v%s | jitcor", BuildConfig.VERSION_NAME));
         String command = "am start -n me.neversleep.plusplus/.MainActivity --ez power true/false";
         textView2.setText(String.format(getString(R.string.shell_control), command));
         textView2.setOnLongClickListener(view -> {
@@ -123,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             switchCompat.setChecked(this.xConf.getBoolean("power", false));
         }
+
     }
 
 
