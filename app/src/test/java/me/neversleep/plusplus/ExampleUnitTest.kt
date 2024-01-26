@@ -12,5 +12,10 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+        for (method in A().javaClass.methods) {
+            println("method.name:" + method.name)
+            println("method:" + method.genericReturnType.toString())
+        }
     }
+
 }
