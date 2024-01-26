@@ -49,7 +49,7 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
-               //for #24
+               //for #4
                if (xSharedPreferences.getBoolean("disable_sleep", false)) {
                     XUtils.xLog("neversleep", "disable sleep:  true");
                     //ref:https://www.cnblogs.com/crushgirl/p/15630106.html
