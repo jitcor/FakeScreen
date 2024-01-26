@@ -48,6 +48,7 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
+               //ref:https://www.cnblogs.com/crushgirl/p/15630106.html
                //ref:https://cs.android.com/android/platform/superproject/+/android-14.0.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=b3691fab2356133dfc7e11c213732ffef9a85315;l=2876
                XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "updateUserActivitySummaryLocked", new XC_MethodHook() {
 
