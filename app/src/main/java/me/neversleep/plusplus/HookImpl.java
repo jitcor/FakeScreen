@@ -4,8 +4,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.lang.reflect.Method;
-
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
@@ -50,44 +48,29 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
-               //ref:https://cs.android.com/android/platform/superproject/+/android-5.1.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=01c06dfb076b71cb72c4bff9175bec9d59d2efde;l=1539
-               XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "getScreenOffTimeoutLocked", new XC_MethodHook() {
+               //ref:https://cs.android.com/android/platform/superproject/+/android-14.0.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=b3691fab2356133dfc7e11c213732ffef9a85315;l=2876
+               XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "updateUserActivitySummaryLocked", new XC_MethodHook() {
 
                     @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                         super.afterHookedMethod(param);
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                         super.beforeHookedMethod(param);
                          try {
-                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: start");
+                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: start");
                               xSharedPreferences.reload();
                               if (!xSharedPreferences.getBoolean("power", false)) {
-                                   Log.e("neversleep", "getScreenOffTimeoutLocked: power is false");
+                                   Log.e("neversleep", "updateUserActivitySummaryLocked: power is false");
                                    return;
                               }
-
-                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: power is true");
-                              if (param.method instanceof Method) {
-                                   String type = ((Method) param.method).getGenericReturnType().toString();
-                                   switch (type) {
-                                        case "int":
-                                             param.setResult(24 * 24 * 60 * 60 * 1000);
-                                             XUtils.xLog("neversleep", "getScreenOffTimeoutLocked success:" + Integer.MAX_VALUE);//2147483647
-                                             break;
-                                        case "long":
-                                             param.setResult(5 * 365 * 24 * 60 * 60 * 1000L);
-                                             XUtils.xLog("neversleep", "getScreenOffTimeoutLocked success:" + (5 * 365 * 24 * 60 * 60 * 1000L));//2147483647
-                                             break;
-                                        default:
-                                             XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: error:  not support type: " + type);
-                                   }
-                              } else {
-                                   XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: error:  param.method not instanceof Method ");
-                              }
+                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: power is true");
+                              param.setResult(null);
+                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: disable sleep success");
                          } catch (Throwable t) {
-                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: error:", t);
+                              XUtils.xLog("neversleep", "updateUserActivitySummaryLocked: error:", t);
                          }
+
                     }
                });
-               XUtils.xLog("neversleep", "main: Hook getScreenOffTimeoutLocked success");
+               XUtils.xLog("neversleep", "main: Hook updateUserActivitySummaryLocked success");
           } catch (Throwable th) {
                th.printStackTrace();
                XUtils.xLog("neversleep", "main: error:" + th.getMessage(), th);
