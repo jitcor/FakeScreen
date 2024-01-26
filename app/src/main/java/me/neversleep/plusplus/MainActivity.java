@@ -11,9 +11,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.service.quicksettings.TileService;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         main();
+        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 1000);
+        Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, 1000);
     }
 
     @SuppressLint("RestrictedApi")
@@ -66,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         TextView textView2 = findViewById(R.id.shell_control);
         TextView info = findViewById(R.id.info);
         SwitchCompat switchCompat = findViewById(R.id.power);
-
         info.setOnClickListener(view -> {
             Uri uri = Uri.parse("https://github.com/jitcor");
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);

@@ -48,6 +48,27 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
+               XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "getScreenOffTimeoutLocked", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                         super.afterHookedMethod(param);
+                         try {
+                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: start");
+                              xSharedPreferences.reload();
+                              int i = 0;
+                              if (!xSharedPreferences.getBoolean("power", false)) {
+                                   Log.e("neversleep", "getScreenOffTimeoutLocked: power is false");
+                                   return;
+                              }
+                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: power is true");
+                              param.setResult(Integer.MAX_VALUE);
+                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked success:" + Integer.MAX_VALUE);
+                         } catch (Throwable t) {
+                              XUtils.xLog("neversleep", "getScreenOffTimeoutLocked: error:", t);
+                         }
+                    }
+               });
+               XUtils.xLog("neversleep", "main: Hook getScreenOffTimeoutLocked success");
           } catch (Throwable th) {
                th.printStackTrace();
                XUtils.xLog("neversleep", "main: error:" + th.getMessage(), th);
