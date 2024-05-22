@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -47,6 +48,9 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
      }
 
      private void hookAndroid(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+          final XSharedPreferences xSharedPreferences = new XSharedPreferences(BuildConfig.APPLICATION_ID, "x_conf");
+          xSharedPreferences.makeWorldReadable();
+          xSharedPreferences.reload();
           XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.am.ActivityManagerService", loadPackageParam.classLoader), "systemReady", new XC_MethodHook() { // from class: me.neversleep.plusplus.XMain.2
                protected void beforeHookedMethod(XC_MethodHook.MethodHookParam methodHookParam) throws Throwable {
                     try {
@@ -94,5 +98,23 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                     throw new Throwable("Context not found");
                }
           });
+
+          Class<?> powerGroupClass = XposedHelpers.findClass("com.android.server.power.PowerGroup", loadPackageParam.classLoader);
+
+          XposedHelpers.findAndHookMethod("com.android.server.power.PowerManagerService", loadPackageParam.classLoader, "isBeingKeptAwakeLocked", powerGroupClass, new XC_MethodHook() {
+               protected void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                    xSharedPreferences.reload();
+                    Log.e("neversleep", "get_disable_sleep: disable_sleep is " + String.valueOf(xSharedPreferences.getBoolean("disable_sleep", false)));
+
+                    if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
+                         Log.e("neversleep", "afterHookedMethod: disable_sleep is false");
+                         return;
+                    }
+                    param.setResult(true);
+                    Log.e("neversleep", "afterHookedMethod: disable_sleep is true");
+
+               }
+          });
+
      }
 }
