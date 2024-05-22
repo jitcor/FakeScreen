@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
                 if (old != isChecked) {
                     if (!xConf.edit().putBoolean("disable_sleep", isChecked).commit()) {
                         Toast.makeText(MainActivity.this, R.string.disable_sleep_error_tips, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, R.string.disable_sleep_tips, Toast.LENGTH_LONG).show();
                     }
                 }
             } else {
