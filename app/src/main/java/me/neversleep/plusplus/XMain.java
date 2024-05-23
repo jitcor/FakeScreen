@@ -99,12 +99,13 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                }
           });
 
-          Class<?> powerGroupClass = XposedHelpers.findClass("com.android.server.power.PowerGroup", loadPackageParam.classLoader);
+//          Class<?> powerGroupClass = XposedHelpers.findClass("com.android.server.power.PowerGroup", loadPackageParam.classLoader);
+          Class<?> powerManagerServiceClass = XposedHelpers.findClass("com.android.server.power.PowerManagerService", loadPackageParam.classLoader);
 
-          XposedHelpers.findAndHookMethod("com.android.server.power.PowerManagerService", loadPackageParam.classLoader, "isBeingKeptAwakeLocked", powerGroupClass, new XC_MethodHook() {
+          XposedBridge.hookAllMethods(powerManagerServiceClass, "isBeingKeptAwakeLocked", new XC_MethodHook() {
                protected void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
                     xSharedPreferences.reload();
-                    Log.e("neversleep", "get_disable_sleep: disable_sleep is " + String.valueOf(xSharedPreferences.getBoolean("disable_sleep", false)));
+                    Log.e("neversleep", "get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
 
                     if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
                          Log.e("neversleep", "afterHookedMethod: disable_sleep is false");
