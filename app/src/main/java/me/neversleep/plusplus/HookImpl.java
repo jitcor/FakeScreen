@@ -49,14 +49,6 @@ public class HookImpl {
                     }
                });
                XUtils.xLog("neversleep", "main: Hook success");
-               //for #4
-               if (xSharedPreferences.getBoolean("disable_sleep", false)) {
-                    XUtils.xLog("neversleep", "disable sleep:  true");
-					//let device believe it is being kept awake by a wake lock
-                    //ref:https://cs.android.com/android/platform/superproject/+/android-14.0.0_r1:frameworks/base/services/core/java/com/android/server/power/PowerManagerService.java;drc=b3691fab2356133dfc7e11c213732ffef9a85315;l=3271
-                    XposedBridge.hookAllMethods(XposedHelpers.findClass("com.android.server.power.PowerManagerService", classLoader), "isBeingKeptAwakeLocked", XC_MethodReplacement.returnConstant(true));
-                    XUtils.xLog("neversleep", "main: Hook disable_sleep success");
-               }
           } catch (Throwable th) {
                th.printStackTrace();
                XUtils.xLog("neversleep", "main: error:" + th.getMessage(), th);
