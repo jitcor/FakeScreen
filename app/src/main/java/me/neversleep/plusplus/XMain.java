@@ -163,46 +163,6 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
           } catch (Throwable error) {
                Log.e("neversleep", "getScreenOffTimeoutLocked error:", error);
           }
-          try {
-               XposedHelpers.findAndHookMethod(
-                       "com.android.server.power.PowerManagerService",
-                       loadPackageParam.classLoader,
-                       "updateUserActivitySummaryLocked",
-                       long.class,
-                       int.class,
-                       new XC_MethodHook() {
-
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                 super.afterHookedMethod(param);
-                                 xSharedPreferences.reload();
-                                 Log.e("neversleep", "[updateUserActivitySummaryLocked]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
-
-                                 if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
-                                      Log.e("neversleep", "[updateUserActivitySummaryLocked]afterHookedMethod: disable_sleep is false");
-                                      return;
-                                 }
-                                 // 修改结果，确保屏幕不会进入 SCREEN_OFF 状态
-                                 Object powerManagerService = param.thisObject;
-                                 int mUserActivitySummary = (int) XposedHelpers.getObjectField(powerManagerService, "mUserActivitySummary");
-
-                                 // 如果当前状态是屏幕暗或亮，则不修改
-                                 if ((mUserActivitySummary & PowerMangerService.USER_ACTIVITY_SCREEN_BRIGHT) != 0 ||
-                                         (mUserActivitySummary & PowerMangerService.USER_ACTIVITY_SCREEN_DIM) != 0) {
-                                      return;
-                                 }
-
-                                 // 修改结果为 SCREEN_DIM，确保屏幕不会进入 SCREEN_OFF 状态
-                                 mUserActivitySummary = PowerMangerService.USER_ACTIVITY_SCREEN_DIM;
-                                 XposedHelpers.setObjectField(powerManagerService, "mUserActivitySummary", mUserActivitySummary);
-
-                                 XUtils.xLog("neversleep", "Modified mUserActivitySummary to prevent SCREEN_OFF");
-                            }
-                       }
-               );
-          } catch (Throwable error) {
-               Log.e("neversleep", "updateUserActivitySummaryLocked error:", error);
-          }
 
           Log.e("neversleep", "hookAndroid finish");
 
