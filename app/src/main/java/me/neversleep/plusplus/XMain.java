@@ -61,7 +61,7 @@ public class XMain implements IXposedHookLoadPackage {
                               getContext(methodHookParam.thisObject);
                               HookImpl.main(methodHookParam.thisObject.getClass().getClassLoader());
                          } catch (Throwable th) {
-                              Log.e(TAG, Log.getStackTraceString(th));
+                              XUtils.xLog(TAG, Log.getStackTraceString(th));
                               XposedBridge.log(th);
                          }
                     }
@@ -92,7 +92,7 @@ public class XMain implements IXposedHookLoadPackage {
                     }
                });
           } catch (Throwable error) {
-               Log.e(TAG, "systemReady error:", error);
+               XUtils.xLog(TAG, "systemReady error:", error);
           }
           Class<?> powerManagerServiceClass = XposedHelpers.findClass("com.android.server.power.PowerManagerService", loadPackageParam.classLoader);
 
@@ -103,19 +103,19 @@ public class XMain implements IXposedHookLoadPackage {
                XposedBridge.hookAllMethods(powerManagerServiceClass, "isBeingKeptAwakeLocked", new XC_MethodHook() {
                     protected void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
                          xSharedPreferences.reload();
-                         Log.e(TAG, "get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
+                         XUtils.xLog(TAG, "get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
 
                          if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
-                              Log.e(TAG, "afterHookedMethod: disable_sleep is false");
+                              XUtils.xLog(TAG, "afterHookedMethod: disable_sleep is false");
                               return;
                          }
                          param.setResult(true);
-                         Log.e(TAG, "afterHookedMethod: disable_sleep is true");
+                         XUtils.xLog(TAG, "afterHookedMethod: disable_sleep is true");
 
                     }
                });
           } catch (Throwable error) {
-               Log.e(TAG, "isBeingKeptAwakeLocked error:", error);
+               XUtils.xLog(TAG, "isBeingKeptAwakeLocked error:", error);
           }
           if (false) {
                //完全没效果
@@ -125,18 +125,18 @@ public class XMain implements IXposedHookLoadPackage {
                          protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                               super.beforeHookedMethod(param);
                               xSharedPreferences.reload();
-                              Log.e(TAG, "[goToSleep]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
+                              XUtils.xLog(TAG, "[goToSleep]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
 
                               if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
-                                   Log.e(TAG, "[goToSleep]afterHookedMethod: disable_sleep is false");
+                                   XUtils.xLog(TAG, "[goToSleep]afterHookedMethod: disable_sleep is false");
                                    return;
                               }
                               param.setResult(null);
-                              Log.e(TAG, "[goToSleep]afterHookedMethod: disable_sleep is true");
+                              XUtils.xLog(TAG, "[goToSleep]afterHookedMethod: disable_sleep is true");
                          }
                     });
                } catch (Throwable error) {
-                    Log.e(TAG, "goToSleep error:", error);
+                    XUtils.xLog(TAG, "goToSleep error:", error);
                }
           }
           if (false) {
@@ -147,18 +147,18 @@ public class XMain implements IXposedHookLoadPackage {
                          protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                               super.afterHookedMethod(param);
                               xSharedPreferences.reload();
-                              Log.e(TAG, "[getScreenOffTimeoutLocked]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
+                              XUtils.xLog(TAG, "[getScreenOffTimeoutLocked]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
 
                               if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
-                                   Log.e(TAG, "[getScreenOffTimeoutLocked]afterHookedMethod: disable_sleep is false");
+                                   XUtils.xLog(TAG, "[getScreenOffTimeoutLocked]afterHookedMethod: disable_sleep is false");
                                    return;
                               }
                               param.setResult(Long.MAX_VALUE);
-                              Log.e(TAG, "[getScreenOffTimeoutLocked]afterHookedMethod: disable_sleep is true");
+                              XUtils.xLog(TAG, "[getScreenOffTimeoutLocked]afterHookedMethod: disable_sleep is true");
                          }
                     });
                } catch (Throwable error) {
-                    Log.e(TAG, "getScreenOffTimeoutLocked error:", error);
+                    XUtils.xLog(TAG, "getScreenOffTimeoutLocked error:", error);
                }
           }
           //目前测试没什么问题
@@ -175,10 +175,10 @@ public class XMain implements IXposedHookLoadPackage {
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                  super.afterHookedMethod(param);
                                  xSharedPreferences.reload();
-                                 Log.e(TAG, "[updateUserActivitySummaryLocked]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
+                                 XUtils.xLog(TAG, "[updateUserActivitySummaryLocked]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
 
                                  if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
-                                      Log.e(TAG, "[updateUserActivitySummaryLocked]afterHookedMethod: disable_sleep is false");
+                                      XUtils.xLog(TAG, "[updateUserActivitySummaryLocked]afterHookedMethod: disable_sleep is false");
                                       return;
                                  }
                                  // 修改结果，确保屏幕不会进入 SCREEN_OFF 状态
@@ -200,10 +200,10 @@ public class XMain implements IXposedHookLoadPackage {
                        }
                );
           } catch (Throwable error) {
-               Log.e(TAG, "updateUserActivitySummaryLocked error:", error);
+               XUtils.xLog(TAG, "updateUserActivitySummaryLocked error:", error);
           }
 
-          Log.e(TAG, "hookAndroid finish");
+          XUtils.xLog(TAG, "hookAndroid finish");
 
      }
 }
