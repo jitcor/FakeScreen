@@ -105,6 +105,7 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
           }
           Class<?> powerManagerServiceClass = XposedHelpers.findClass("com.android.server.power.PowerManagerService", loadPackageParam.classLoader);
 
+          //部分设备没效果：Redmi note5 android 9
           try {
 //          Class<?> powerGroupClass = XposedHelpers.findClass("com.android.server.power.PowerGroup", loadPackageParam.classLoader);
 
@@ -125,25 +126,51 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
           } catch (Throwable error) {
                Log.e("neversleep", "isBeingKeptAwakeLocked error:", error);
           }
-          try {
-               XposedHelpers.findAndHookMethod(powerManagerServiceClass, "goToSleep", long.class, int.class, int.class, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                         super.beforeHookedMethod(param);
-                         xSharedPreferences.reload();
-                         Log.e("neversleep", "[goToSleep]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
+          if (false) {
+               //完全没效果
+               try {
+                    XposedHelpers.findAndHookMethod(powerManagerServiceClass, "goToSleep", long.class, int.class, int.class, new XC_MethodHook() {
+                         @Override
+                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                              super.beforeHookedMethod(param);
+                              xSharedPreferences.reload();
+                              Log.e("neversleep", "[goToSleep]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
 
-                         if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
-                              Log.e("neversleep", "[goToSleep]afterHookedMethod: disable_sleep is false");
-                              return;
+                              if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
+                                   Log.e("neversleep", "[goToSleep]afterHookedMethod: disable_sleep is false");
+                                   return;
+                              }
+                              param.setResult(null);
+                              Log.e("neversleep", "[goToSleep]afterHookedMethod: disable_sleep is true");
                          }
-                         param.setResult(null);
-                         Log.e("neversleep", "[goToSleep]afterHookedMethod: disable_sleep is true");
-                    }
-               });
-          } catch (Throwable error) {
-               Log.e("neversleep", "goToSleep error:", error);
+                    });
+               } catch (Throwable error) {
+                    Log.e("neversleep", "goToSleep error:", error);
+               }
           }
+          if (false) {
+               //会导致黑屏
+               try {
+                    XposedBridge.hookAllMethods(powerManagerServiceClass, "getScreenOffTimeoutLocked", new XC_MethodHook() {
+                         @Override
+                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                              super.afterHookedMethod(param);
+                              xSharedPreferences.reload();
+                              Log.e("neversleep", "[getScreenOffTimeoutLocked]get_disable_sleep: disable_sleep is " + xSharedPreferences.getBoolean("disable_sleep", false));
+
+                              if (!xSharedPreferences.getBoolean("disable_sleep", false)) {
+                                   Log.e("neversleep", "[getScreenOffTimeoutLocked]afterHookedMethod: disable_sleep is false");
+                                   return;
+                              }
+                              param.setResult(Long.MAX_VALUE);
+                              Log.e("neversleep", "[getScreenOffTimeoutLocked]afterHookedMethod: disable_sleep is true");
+                         }
+                    });
+               } catch (Throwable error) {
+                    Log.e("neversleep", "getScreenOffTimeoutLocked error:", error);
+               }
+          }
+          //目前测试没什么问题
           try {
                XposedHelpers.findAndHookMethod(
                        "com.android.server.power.PowerManagerService",
