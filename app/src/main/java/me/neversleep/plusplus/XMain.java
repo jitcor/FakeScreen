@@ -6,14 +6,13 @@ import android.util.Log;
 import java.lang.reflect.Field;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
+public class XMain implements IXposedHookLoadPackage {
 
      public static final String TAG = "neversleep";
 
@@ -30,14 +29,6 @@ public class XMain implements IXposedHookLoadPackage, IXposedHookZygoteInit {
           }
      }
 
-     public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
-          if (startupParam.startsSystemServer) {
-               XUtils.xLog("neversleep", "initZygote:" + startupParam.modulePath);
-               XUtils.xLog("neversleep", "start hook system_server...");
-               HookImpl.main(null);
-               XUtils.xLog("neversleep", "end hook system_server...");
-          }
-     }
 
      private void hookSelf(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
           XposedHelpers.findAndHookMethod("me.neversleep.plusplus.MainActivity", loadPackageParam.classLoader, "getActiveVersion", new XC_MethodHook() {
